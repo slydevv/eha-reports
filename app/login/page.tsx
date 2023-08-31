@@ -18,12 +18,7 @@ export default function Login() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (session?.status === "authenticated") {
-      router.push(`${session.data.user?.isAdmin ? "/admin" : "/user"}`);
-    }
-  }, [session.status, router]);
-
+  
   const {
     register,
     handleSubmit,
@@ -41,7 +36,7 @@ export default function Login() {
         }
         if (res?.ok && !res?.error) {
           redirect();
-          toast.success("Logged in!");
+          toast.success("Logged in!"); 
         }
       })
       .finally(() => setIsLoading(false));

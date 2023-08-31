@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { BeatLoader } from "react-spinners";
+import { getSession } from "next-auth/react";
 
 const AuthForm = () => {
   const router = useRouter();
@@ -15,11 +16,7 @@ const AuthForm = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (session?.status === "authenticated") {
-      router.push(`${session.data.user?.isAdmin ? "/admin" : "/dashboard"}`);
-    }
-  }, [session.status, router]);
+
 
   const {
     register,
@@ -28,23 +25,26 @@ const AuthForm = () => {
     reset,
   } = useForm({ resolver: yupResolver(loginValidationSchema) });
 
-  const handleLogin = (data: any) => {
-    setIsLoading(true);
+const handleLogin = async (data: any) => {
+  setIsLoading(true);
 
-    signIn("credentials", { ...data, redirect: false })
-      .then((callback) => {
-        if (callback?.error) {
-          toast.error("Something went wrong");
-        }
-        if (callback?.ok && !callback?.error) {
-          router.push("/admin");
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-        reset();
-      });
-  };
+  signIn("credentials", { ...data, redirect: false })
+    .then((res) => {
+      if (res?.error) {
+        toast.error(res.error);
+      }
+      if (res?.ok && !res?.error) {
+        redirect();
+        toast.success("Logged in!");
+      }
+    })
+    .finally(() => setIsLoading(false));
+};
+const redirect = async () => {
+  const session = await getSession();
+  const status = session?.user?.isAdmin;
+  status ? router.push("/admin") : router.push("/user");
+};
 
   return (
     <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
