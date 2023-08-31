@@ -19,7 +19,7 @@ export default function Login() {
 
   useEffect(() => {
     if (session?.status === "authenticated") {
-      router.push(`${session.data.user?.isAdmin ? "/admin" : "/dashboard"}`);
+      router.push(`${session.data.user?.isAdmin ? "/admin" : "/user"}`);
     }
   }, [session.status, router]);
 
