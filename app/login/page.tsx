@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -10,6 +10,7 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import { loginValidationSchema } from "../lib/auth/yupSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { getSession } from "next-auth/react";
 
 export default function Login() {
   const router = useRouter();
@@ -30,24 +31,26 @@ export default function Login() {
     reset,
   } = useForm({ resolver: yupResolver(loginValidationSchema) });
 
-  const handleLogin = (data: any) => {
+  const handleLogin  = async (data:any) => {
     setIsLoading(true);
 
     signIn("credentials", { ...data, redirect: false })
-      .then((callback) => {
-        if (callback?.error) {
-          toast.error("Something went wrong");
+      .then((res) => {
+        if (res?.error) {
+          toast.error(res.error);
         }
-        if (callback?.ok && !callback?.error) {
-          router.push("/admin");
+        if (res?.ok && !res?.error) {
+          redirect();
+          toast.success("Logged in!");
         }
       })
-      .finally(() => {
-        setIsLoading(false);
-        reset();
-      });
+      .finally(() => setIsLoading(false));
   };
-
+  const redirect = async () => {
+    const session = await getSession();
+    const status = session?.user?.isAdmin;
+    status ? router.push("/admin") : router.push("/user");
+  };
   return (
     <div className="max-w-[2000px] gap-x-10 lg:gap-x-20 mx-auto px-7 lg:pr-20">
       <section className="w-full md:w-2/5 mx-auto">
