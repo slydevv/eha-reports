@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query";
 
-export default function Dashboard() {
+export default function User() {
   const router = useRouter();
   const [categories, setCategories] = useState([])
 
