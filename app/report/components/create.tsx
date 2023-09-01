@@ -9,6 +9,7 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Listbox, Transition } from "@headlessui/react";
 import { BsChevronDoubleDown } from "react-icons/bs";
 import { AiOutlineCheck } from "react-icons/ai";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface inputProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ interface Inputs {
 }
 
 const Create: React.FC<inputProps> = ({ isOpen, onClose }) => {
+  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false)
   const [categories, setCategories] = useState([]);
   const query = useQuery({
@@ -52,6 +54,7 @@ const Create: React.FC<inputProps> = ({ isOpen, onClose }) => {
         reset();
         onClose();
         toast.success("Report added");
+        queryClient.invalidateQueries({ queryKey: ["getReport"] });
       }
     } catch (error: any) {
       setIsLoading(false);

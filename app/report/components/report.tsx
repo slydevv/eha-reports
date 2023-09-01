@@ -3,6 +3,8 @@ import ConfirmModal from "@/app/components/confirmModal";
 import { useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Update from "./update";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 interface ReportProp {
   reports: any;
@@ -10,6 +12,7 @@ interface ReportProp {
 }
 
 export default function Report({ reports }: ReportProp) { 
+  const [allReports, setAllReports] = useState(reports)
   const [update, setUpdate] = useState(false);
   const [del, setDel] = useState(false);
   const [id, setId] = useState("");
@@ -17,10 +20,16 @@ export default function Report({ reports }: ReportProp) {
     setUpdate(false);
     setDel(false);
   };
-
+const query = useQuery({
+  queryKey: ["getUser"],
+  queryFn: () => axios("/api/report"),
+  onSuccess: ({ data }) => {
+    setAllReports(data);
+  },
+});
   return (
     <div className="mt-8 grid gap-4 grid-cols-1 lg:grid-cols-3  mx-10">
-      {reports && reports.map((report: any) => (
+      {allReports && allReports.map((report: any) => (
           <div
             key={report.id}
             className="my-2  text-center px-10 text-black shadow-lg border border-[#ececec] rounded-lg  justify-between pb-5"

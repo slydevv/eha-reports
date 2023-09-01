@@ -6,6 +6,8 @@ import { PiDotsThreeVertical } from "@/app/assets/index";
 import dynamic from "next/dynamic";
 import moment from 'moment'
 import UserModal from "./userModal";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios"
 
 interface UsersTableProps {
   initialUsers: FetchedUser[];
@@ -20,6 +22,23 @@ const UsersTable: React.FC<UsersTableProps> = ({ initialUsers }) => {
   const onClose = () => {
     setIsOpen(false)
   }
+
+  
+ const query = useQuery({
+   queryKey: ["getUser"],
+   queryFn: () => axios("/api/user"),
+   onSuccess: ({ data }) => {
+     setUsers(data);
+     console.log("data",data)
+     console.log("users",users)
+     
+   },
+ });
+
+ const convertDate = (date: any) => {
+  const d = new Date(date)
+  return d
+ }
 
   return (
     <div className="mt-8 mb-12 lg:mb-0">
@@ -46,14 +65,15 @@ const UsersTable: React.FC<UsersTableProps> = ({ initialUsers }) => {
           {/* <!-- table body --> */}
           <tbody className="rounded-md">
             {users &&
-              users.map((user: any) => (
+              users?.map((user: any) => (
                 <tr key={user.id} className="bg-white border-t text-black">
                   <td className="px-6 py-4">{user.name}</td>
                   <td className="px-6 py-4">{user.email}</td>
                   <td className="px-6 py-4">
-                    {moment(user.createdAt, "MMM DD, YYYY, h:mm:ss A").format(
-                      "MMM DD, YYYY"
-                    )}
+                    {moment(
+                      convertDate(user?.createdAt),
+                      "MMM DD, YYYY, A"
+                    ).format("DD MMM, YYYY")}
                   </td>
                   <td></td>
                   <td></td>

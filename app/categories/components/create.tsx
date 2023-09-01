@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import Modal from "../../components/modal";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface inputProps {
   isOpen: boolean;
@@ -14,7 +15,8 @@ interface Inputs {
   name: string;
 }
 
-const Create: React.FC<inputProps> = ({ isOpen, onClose}) => {
+const Create: React.FC<inputProps> = ({ isOpen, onClose }) => {
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -32,6 +34,7 @@ const Create: React.FC<inputProps> = ({ isOpen, onClose}) => {
         reset();
         onClose();
         toast.success("Category created");
+        queryClient.invalidateQueries({ queryKey: ["getCategories"] });
       }
     } catch (error: any) {
       toast.error(error.response.data.error);

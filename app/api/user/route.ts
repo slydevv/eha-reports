@@ -12,6 +12,9 @@ export  async function GET(req:Request, res: NextResponse) {
   
             try {
                 const allUsers = await prisma.user.findMany({
+                      orderBy:{
+                createdAt:'desc'
+            },
                     include:{
                         categories:true
                     }

@@ -10,11 +10,11 @@ import { BeatLoader } from "react-spinners";
 import { ModalProps, CreateUserInputs } from "@/app/types";
 import { schema } from "@/app/lib/auth/yupSchema";
 import Modal from "@/app/components/modal";
-import { useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 const CreateModal: React.FC<ModalProps> = ({ isOpen, onClose, categories }) => { 
- 
+ const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
  
   
@@ -50,7 +50,8 @@ const CreateModal: React.FC<ModalProps> = ({ isOpen, onClose, categories }) => {
            setIsLoading(false);
            toast.success("User created")
            reset();
-            onClose();
+           onClose();
+            queryClient.invalidateQueries({ queryKey: ["getUser"] });
          }
        } catch (error: any) {
           setIsLoading(false);

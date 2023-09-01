@@ -3,18 +3,16 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import Update from "./update";
 import { useState } from "react";
 import ConfirmModal from "@/app/components/confirmModal";
-
+import { useQuery } from "@tanstack/react-query";
+import axios from 'axios'
 
 interface CategoryProp {
   category: any;
  
 }
 
-export default function Category({
-  category,
-
-}: CategoryProp) {
-  
+export default function Category({category}: CategoryProp) {
+  const [categories, setCategories] = useState(category)
   const [update, setUpdate] = useState(false)
   const [del, setDel] = useState(false)
   const [id, setId] = useState("")
@@ -23,10 +21,20 @@ export default function Category({
     setDel(false);
    
   };
+
+  
+ const query = useQuery({
+   queryKey: ["getCategories"],
+   queryFn: () => axios("/api/category"),
+   onSuccess: ({ data }) => {
+     setCategories(data);
+   },
+ });
+
   return (
     <div className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-12">
-      {category &&
-        category.map((category: any) => (
+      {categories &&
+        categories.map((category: any) => (
           <div
             key={category.id}
             className="flex flex-col my-4 px-5 shadow-lg border border-[#ececec] rounded-md h-160px] justify-between pb-5"
