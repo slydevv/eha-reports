@@ -25,7 +25,7 @@ export  async function GET(req:Request, res: NextResponse) {
                 NextResponse.json({error}, {status:400})
             }
  
-    }
+    } 
    
 
 export async function POST(req: NextRequest, res:NextResponse) {

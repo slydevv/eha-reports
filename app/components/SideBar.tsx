@@ -28,8 +28,8 @@ const SideBar: React.FC<SidebarProps> = ({ children }) => {
     () => [
       {
         label: "All Users",
-        active: pathName === "/admin",
-        href: "/admin",
+        active: pathName === "/superadmin",
+        href: "/superadmin",
         icon: FaUsers,
         className:"text-black"
       },
