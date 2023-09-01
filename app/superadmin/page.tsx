@@ -6,7 +6,7 @@ import CreateModal from "./components/createModal";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios"
 
-export default function Admin() {
+export default function SuperAdmin() {
   const [isOpen, setIsOpen] = useState(false)
   const [categories, setCategories] = useState("")
   const onClose = () => {

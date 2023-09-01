@@ -2,7 +2,7 @@ import { getAllUsers } from "../actions/getUsers";
 import SideBar from "../components/SideBar";
 import UsersTable from "./components/UsersTable";
 
-export default async function AdminLayout({
+export default async function SuperAdminLayout({
   children,
 }: {
   children: React.ReactNode;

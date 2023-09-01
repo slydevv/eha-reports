@@ -43,7 +43,7 @@ const handleLogin = async (data: any) => {
 const redirect = async () => {
   const session = await getSession();
   const status = session?.user?.isAdmin;
-  status ? router.push("/admin") : router.push("/user");
+  status ? router.push("/superadmin") : router.push("/user");
 };
 
   return (
