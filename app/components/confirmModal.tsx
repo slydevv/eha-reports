@@ -6,6 +6,7 @@ import Modal from "../components/modal";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -17,12 +18,14 @@ interface ConfirmModalProps {
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({api, isOpen, onClose, id }) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const handleDelete = async (id: string) => {
     try {
       const response = await axios.delete(`/api/${api}/${id}`);
       if ((response.status = 201)) {
         onClose();
         toast.success(`This ${api} has been deleted`);
+        queryClient.invalidateQueries({ queryKey: ["getUser"] });
         router.refresh();
       } 
     } catch (error: any) {

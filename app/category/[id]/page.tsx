@@ -120,7 +120,7 @@ export default function Category({ params }: props) {
           <div className="flex flex-row justify-center items-center gap-8">
             <div className="hidden md:block">
               <Link
-                href="/dashboard"
+                href="/user"
                 className="bg-blue-300 hover:bg-blue-500 text-white p-3 rounded-lg"
               >
                 Dashboard
