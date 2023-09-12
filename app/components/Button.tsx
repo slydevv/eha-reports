@@ -39,7 +39,7 @@ const Button: React.FC<ButtonProps> = ({
   focus-visible:outline-2
   focus-visible:outline-offset-2
   `,
-        disabled && "opacity-50 cursor-default",
+        disabled && "opacity-50 cursor-not-allowed ",
         fullWidth && "w-full",
         primary && "bg-blue-500",
         secondary ? "secondary-button" : "text-white",

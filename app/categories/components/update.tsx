@@ -4,6 +4,9 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import Modal from "../../components/modal";
 import { FormEvent, useEffect, useState } from "react";
+import Button from "@/app/components/Button";
+import { BeatLoader } from "react-spinners";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface inputProps {
   isOpen: boolean;
@@ -15,7 +18,9 @@ interface Inputs {
 }
 
 const Update: React.FC<inputProps> = ({ isOpen, onClose, id }) => {
+   const queryClient = useQueryClient();
   const [name, setName] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
  
   useEffect(() => {
   //   if (name === "") {
@@ -31,6 +36,7 @@ const Update: React.FC<inputProps> = ({ isOpen, onClose, id }) => {
 }, [id]);
   
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
+    setIsLoading(true)
     e.preventDefault()
     
     try {
@@ -38,11 +44,13 @@ const Update: React.FC<inputProps> = ({ isOpen, onClose, id }) => {
         name
       });
       if ((response.status = 201)) {
-      
+        setIsLoading(false)
         onClose();
         toast.success("Category updated");
+          queryClient.invalidateQueries({ queryKey: ["category"] });
       }
     } catch (error: any) {
+      setIsLoading(false);
       toast.error(error.response.data.error);
     }
   };
@@ -59,7 +67,7 @@ const Update: React.FC<inputProps> = ({ isOpen, onClose, id }) => {
               <input
                 type="text"
                 className="pl-4 py-5 bg-[#F3F3F3] rounded-md mt-2"
-                onChange={(e)=> setName(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
                 value={name}
                 placeholder="category"
                 name="category"
@@ -76,12 +84,9 @@ const Update: React.FC<inputProps> = ({ isOpen, onClose, id }) => {
           >
             Cancel
           </button>
-          <button
-            className="bg-blue-400 hover:bg-blue-200 flex justify-center rounded-md px-3 py-2 text-sm"
-            type="submit"
-          >
-            Update
-          </button>
+          <Button primary type="submit" disabled={isLoading}>
+            {isLoading ? <BeatLoader color="#ffffff" /> : "Update"}
+          </Button>
         </div>
       </form>
     </Modal>

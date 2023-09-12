@@ -24,10 +24,11 @@ export default function Category({category}: CategoryProp) {
 
   
  const query = useQuery({
-   queryKey: ["getCategories"],
+   queryKey: ["category"],
    queryFn: () => axios("/api/category"),
    onSuccess: ({ data }) => {
      setCategories(data);
+     console.log("data",data)
    },
  });
 

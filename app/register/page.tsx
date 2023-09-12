@@ -1,76 +1,95 @@
 "use client";
 
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import {  CreateUserInputs } from "@/app/types";
+import Button from "../components/Button";
+import { BeatLoader } from "react-spinners";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 const schema = yup.object({
   email: yup.string().required(),
   password: yup.string().required(),
 });
 
-type Inputs = {
-  email: string;
-  password: string;
-};
+
 export default function RegisterAdmin() {
-  const { register, handleSubmit } = useForm<Inputs>({
+  const [isLoading, setIsLoading] = useState(false)
+  const { register, handleSubmit, control, reset } = useForm<CreateUserInputs>({
+    // @ts-ignore
     resolver: yupResolver(schema),
   });
   const router = useRouter();
 
-  const regNewUser: SubmitHandler<Inputs> = async (data) => {
-    const { email, password } = data;
-    await axios
-      .post("http://localhost:3000/api/user/register", { email, password })
-      .then((res) => {
-        if (res.status === 201) {
-          router.push("/");
+  const createAdmin: SubmitHandler<CreateUserInputs> = async (data) => {
+    setIsLoading(true)
+    const { name, email, password } = data;
+    const isAdmin = true
+    const categoryValue = ["Administration "];
+    
+      try {
+        const response = await axios.post("/api/user", {
+          name,
+          email,
+          password,
+          isAdmin,
+          categoryValue
+        });
+        if ((response.status = 201)) {
+          setIsLoading(false);
+          toast.success("admin created. Proceed to login");
+          reset(); 
+          router.push('/')  
         }
-        
-      });
+      } catch (error: any) {
+        setIsLoading(false);
+       
+        toast.error("something went wrong");
+      }
   };
   return (
-    <div>
-      <h1>Register</h1>
-      <form onSubmit={handleSubmit(regNewUser)}>
-        <div>
-          <label>
-            Email:{" "}
+    <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
+      <h1 className="text-center font-semibold">Create New Admin</h1>
+      <form onSubmit={handleSubmit(createAdmin)}>
+        <div className="mt-6 ">
+          <div className="flex flex-col mt-5">
             <input
               type="text"
-              className="my-1 border-2 rounded-md focus:outline-pry w-60 md:w-72"
-              {...register("email", {
-                required: "Please enter an email address",
-              })}
+              className="pl-4 py-5 bg-[#F3F3F3] rounded-md mt-2"
+              {...register("name")}
+              placeholder="name"
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            Password:{" "}
+          </div>
+          <div className="flex flex-col mt-5">
             <input
-              type="password"
-              className="my-1 border-2 rounded-md focus:outline-pry w-60 md:w-72"
-              {...register("password", {
-                required: "Please enter your password",
-                minLength: {
-                  value: 6,
-                  message: "Min password length is 6 ",
-                },
-              })}
+              type="text"
+              className="pl-4 py-5 bg-[#F3F3F3] rounded-md mt-2"
+              {...register("email")}
+              placeholder="email"
             />
-          </label>
+          </div>
+          <div className="flex flex-col mt-5">
+            <input
+              type="text"
+              className="pl-4 py-5 bg-[#F3F3F3] rounded-md mt-2"
+              {...register("password")}
+              placeholder="password"
+            />
+          </div>
+          
+          <div className="flex flex-col mt-5">
+            <Button primary fullWidth type="submit">
+              {isLoading ? <BeatLoader color="#ffffff" /> : "Create"}
+            </Button>
+          </div>
         </div>
-        <button
-          type="submit"
-          className="bg-black text-white w-40 h-10  rounded-2xl"
-        >
-          Register{" "}
-        </button>
       </form>
+      </div>
     </div>
   );
 }

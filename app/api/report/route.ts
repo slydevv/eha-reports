@@ -7,6 +7,9 @@ export async function GET(req: Request, res: NextResponse) {
       include: {
         category: true,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return NextResponse.json(category);

@@ -29,10 +29,11 @@ export  async function GET(req:Request, res: NextResponse) {
    
 
 export async function POST(req: NextRequest, res:NextResponse) {
-    const body =  await req.json()
+    const body = await req.json()
+    
     const { name, email, password, categoryValue, isAdmin } = body
       try {
-                 if (!name || !email || !password || !categoryValue ) {
+                 if (!name || !email || !password ) {
                     return  NextResponse.json({error:"Please fill in all the fields"}, { status: 400 })
                      }
                 const validEmail = email.includes("@eha.ng")
@@ -45,21 +46,24 @@ export async function POST(req: NextRequest, res:NextResponse) {
                     }
                 })
                 if (userExist) { 
-                    return NextResponse.json({error:"This User already exist"})
+                    return NextResponse.json({error:"This User already exist"},  { status: 400 })
                 }
                 const hashed = await bcrypt.hash(password, 12);
             
                 const result = await prisma.user.create({
-                    data: {
-                        name,
-                        email,
-                        password: hashed,
-                        isAdmin, 
-                        categories: {
-                            connect: categoryValue.map((singleCategory:any) => ({ name: singleCategory }))
-                        }
-                    }
-                })
+                  data: {
+                    name,
+                    email,
+                    password: hashed,
+                    isAdmin,
+                    categories: {
+                      connectOrCreate: categoryValue.map((singleCategory:any) => ({
+                        where: { name: singleCategory },
+                        create: { name: singleCategory },
+                      })),
+                    },
+                  },
+                });
           await resend.emails.send({
             from: "Admin@eha.ng",
             to: [`${email}`],
@@ -70,7 +74,7 @@ export async function POST(req: NextRequest, res:NextResponse) {
                 
           return NextResponse.json({ result })
       } catch (error) {
-         
+       
           return  NextResponse.json({ error }, {status:400})
             }
 }

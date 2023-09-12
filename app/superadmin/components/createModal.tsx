@@ -38,6 +38,7 @@ const CreateModal: React.FC<ModalProps> = ({ isOpen, onClose, categories }) => {
       setIsLoading(true);
     const { name, email, password, category } = data;
     const categoryValue = category.map((values:any) => values.value )
+   
        
        try {
          const response = await axios.post("/api/user", {
@@ -116,7 +117,7 @@ const CreateModal: React.FC<ModalProps> = ({ isOpen, onClose, categories }) => {
                  )}
                </div>
                <div className="flex flex-col mt-5">
-                 <Button primary fullWidth type="submit">
+                 <Button primary fullWidth type="submit" disabled={isLoading}>
                    {isLoading ? <BeatLoader color="#ffffff" /> : "Create"}
                  </Button>
                </div>

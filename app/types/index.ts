@@ -22,6 +22,7 @@ export type CreateUserInputs = {
   email: string;
   password: string;
   category: string[];
+  isAdmin: boolean | null
 };
 
 export type UserModalProps = {

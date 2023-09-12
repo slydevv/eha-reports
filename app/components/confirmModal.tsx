@@ -7,6 +7,9 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import Button from "./Button";
+import { BeatLoader } from "react-spinners";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -19,16 +22,21 @@ interface ConfirmModalProps {
 const ConfirmModal: React.FC<ConfirmModalProps> = ({api, isOpen, onClose, id }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleDelete = async (id: string) => {
+    setIsLoading(true)
     try {
       const response = await axios.delete(`/api/${api}/${id}`);
       if ((response.status = 201)) {
+        setIsLoading(false)
         onClose();
         toast.success(`This ${api} has been deleted`);
-        queryClient.invalidateQueries({ queryKey: ["getUser"] });
+        queryClient.invalidateQueries({ queryKey: [`${api}`] });
         router.refresh();
       } 
     } catch (error: any) {
+      setIsLoading(false)
       toast.error(error.response.data.error);
     }
   };
@@ -57,12 +65,16 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({api, isOpen, onClose, id }) 
         </div>
       </div>
       <div className="mt-6 flex items-centr justify-end gap-x-6">
-        <button
-          className="bg-rose-600 hover:bg-rose-400 flex justify-center rounded-md px-3 py-2 text-sm text-white"
+        <Button
+          primary
+          type="submit"
+          disabled={isLoading}
+          danger
           onClick={() => handleDelete(id)}
         >
-          Delete
-        </button>
+          {isLoading ? <BeatLoader color="#ffffff" /> : "Delete"}
+        </Button>
+
         <button
           className="bg-gray-600 hover:bg-gray-400 flex justify-center rounded-md px-3 py-2 text-sm text-white"
           onClick={onClose}

@@ -16,6 +16,7 @@ export const getAllCategories = async () => {
       },
       
     });
+ 
 
     return AllCategories;
   } catch (error: any) {
