@@ -121,7 +121,7 @@ export default function Category({ params }: props) {
             <div className="hidden md:block">
               <Link
                 href="/user"
-                className="bg-blue-300 hover:bg-blue-500 text-white p-3 rounded-lg"
+                className="bg-blue-500 hover:bg-blue-300 text-white p-3 rounded-lg"
               >
                 Dashboard
               </Link>

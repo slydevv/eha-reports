@@ -14,9 +14,30 @@ export const getAllCategories = async () => {
       orderBy: {
         createdAt: "desc",
       },
-      
     });
- 
+
+    return AllCategories;
+  } catch (error: any) {
+    return null;
+  }
+};
+
+export const getCategoriesAndReports = async () => {
+  const session = await getSession();
+
+  if (!session?.user?.email) {
+    return [];
+  }
+
+  try {
+    const AllCategories = await prisma.category.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        reports: true,
+      },
+    });
 
     return AllCategories;
   } catch (error: any) {

@@ -9,7 +9,7 @@ import { useMemo } from "react";
 import { FaUsers, IoCreate, IoOptionsSharp, HiDocument, BiDotsHorizontalRounded } from "../assets";
 import Box from "./Box";
 import SideBarItem from "./SideBarItem";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import getSession from "../actions/getSession";
 
 interface SidebarProps {
@@ -17,6 +17,7 @@ interface SidebarProps {
 }
 
 const SideBar: React.FC<SidebarProps> = ({ children }) => {
+  const { data: session } = useSession();
   const pathName = usePathname();
   const [openMenu, setOpenMenu] = useState(false);
   
@@ -69,11 +70,13 @@ const SideBar: React.FC<SidebarProps> = ({ children }) => {
         </Box>
         <div className="flex  p-2">
           <button className="bg-neutral-900 rounded-full w-16 h-16">
-            <span className="text-white">PN</span>
+            <span className="text-white">
+              {session?.user?.name?.charAt(0).toUpperCase()}
+            </span>
           </button>
           <div className="flex justify-around my-4 mx-2">
             <div>
-              <p className="text-black text-sm ">admin@eha.ng</p>
+              <p className="text-black text-sm ">{session?.user?.email}</p>
             </div>
             <div
               className="ml-12 cursor-pointer"
