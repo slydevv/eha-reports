@@ -1,37 +1,29 @@
-"use client"
+"use client";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Update from "./update";
 import { useState } from "react";
 import ConfirmModal from "@/app/components/confirmModal";
 import { useQuery } from "@tanstack/react-query";
-import axios from 'axios'
+import axios from "axios";
 
 interface CategoryProp {
   category: any;
- 
 }
 
-export default function Category({category}: CategoryProp) {
-  const [categories, setCategories] = useState(category)
-  const [update, setUpdate] = useState(false)
-  const [del, setDel] = useState(false)
-  const [id, setId] = useState("")
+export default function Category({ category }: CategoryProp) {
+  const [categories, setCategories] = useState(category);
+  const [update, setUpdate] = useState(false);
+  const [del, setDel] = useState(false);
+  const [id, setId] = useState("");
   const onClose = () => {
     setUpdate(false);
     setDel(false);
-   
   };
-
-  
- const query = useQuery({
-   queryKey: ["category"],
-   queryFn: () => axios("/api/category"),
-   onSuccess: ({ data }) => {
-     setCategories(data);
-     console.log("data",data)
-   },
- });
-
+  useQuery(["category"], async () => {
+    const res = await axios("/api/category");
+    setCategories(res.data);
+    return res.data;
+  });
   return (
     <div className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-12">
       {categories &&

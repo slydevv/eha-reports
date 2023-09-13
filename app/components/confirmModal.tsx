@@ -6,39 +6,48 @@ import Modal from "../components/modal";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import Button from "./Button";
 import { BeatLoader } from "react-spinners";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
-  id: string
+  id: string;
   api: string;
 }
 
-
-const ConfirmModal: React.FC<ConfirmModalProps> = ({api, isOpen, onClose, id }) => {
-  const router = useRouter();
+const ConfirmModal: React.FC<ConfirmModalProps> = ({
+  api,
+  isOpen,
+  onClose,
+  id,
+}) => {
   const queryClient = useQueryClient();
-  const [isLoading, setIsLoading] = useState(false)
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleDelete = async (id: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const response = await axios.delete(`/api/${api}/${id}`);
       if ((response.status = 201)) {
-        setIsLoading(false)
+        setIsLoading(false);
         onClose();
         toast.success(`This ${api} has been deleted`);
-        queryClient.invalidateQueries({ queryKey: [`${api}`] });
-        router.refresh();
-      } 
+      }
     } catch (error: any) {
-      setIsLoading(false)
-      toast.error(error.response.data.error);
+      setIsLoading(false);
+      toast.error("Could not delete this");
     }
+  };
+
+  const { mutate } = useMutation(handleDelete, {
+    onSuccess: () => {
+      queryClient.invalidateQueries([`${api}`]);
+    },
+  });
+  const onsubmit = async () => {
+    mutate(id);
   };
 
   return (
@@ -68,9 +77,9 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({api, isOpen, onClose, id }) 
         <Button
           primary
           type="submit"
-          disabled={isLoading}
           danger
-          onClick={() => handleDelete(id)}
+          disabled={isLoading}
+          onClick={onsubmit}
         >
           {isLoading ? <BeatLoader color="#ffffff" /> : "Delete"}
         </Button>

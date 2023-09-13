@@ -6,7 +6,7 @@ import Modal from "../../components/modal";
 import { FormEvent, useEffect, useState } from "react";
 import Button from "@/app/components/Button";
 import { BeatLoader } from "react-spinners";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface inputProps {
   isOpen: boolean;
@@ -18,14 +18,11 @@ interface Inputs {
 }
 
 const Update: React.FC<inputProps> = ({ isOpen, onClose, id }) => {
-   const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
  
   useEffect(() => {
-  //   if (name === "") {
-   
-  // }
   const getData = async () => {
     const res = await axios.get(`/api/category/${id}`);
     const data = await res.data.getOne;
@@ -36,28 +33,35 @@ const Update: React.FC<inputProps> = ({ isOpen, onClose, id }) => {
 }, [id]);
   
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
-    setIsLoading(true)
     e.preventDefault()
-    
+    setIsLoading(true)
     try {
       const response = await axios.put(`/api/category/${id}`, {
         name
       });
       if ((response.status = 201)) {
-        setIsLoading(false)
+      setIsLoading(false);
         onClose();
         toast.success("Category updated");
-          queryClient.invalidateQueries({ queryKey: ["category"] });
       }
     } catch (error: any) {
       setIsLoading(false);
       toast.error(error.response.data.error);
     }
   };
+  const { mutate } = useMutation(handleUpdate, {
+    onSuccess: () => {
+      console.log("update mutate")
+      queryClient.invalidateQueries(["category"]);
+     },
+   });
 
+ const onsubmit = async (data: any) => {
+   mutate(data);
+ };
   return (
     <Modal onClose={onClose} isOpen={isOpen}>
-      <form onSubmit={handleUpdate}>
+      <form onSubmit={onsubmit}>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
             <h2 className="text-base font-semibold leading-7 text-gray-900">

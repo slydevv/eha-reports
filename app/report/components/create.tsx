@@ -9,7 +9,9 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Listbox, Transition } from "@headlessui/react";
 import { BsChevronDoubleDown } from "react-icons/bs";
 import { AiOutlineCheck } from "react-icons/ai";
-import { useQueryClient } from "@tanstack/react-query";
+import Button from "@/app/components/Button";
+import { BeatLoader } from "react-spinners";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface inputProps {
   isOpen: boolean;
@@ -23,7 +25,7 @@ interface Inputs {
 
 const Create: React.FC<inputProps> = ({ isOpen, onClose }) => {
   const queryClient = useQueryClient();
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const query = useQuery({
     queryKey: ["getCategory"],
@@ -41,7 +43,7 @@ const Create: React.FC<inputProps> = ({ isOpen, onClose }) => {
   } = useForm<Inputs>();
 
   const handleCreate: SubmitHandler<Inputs> = async (data) => {
-    setIsLoading(true)
+    setIsLoading(true);
     const { label, link, category } = data;
     try {
       const response = await axios.post("/api/report", {
@@ -50,20 +52,29 @@ const Create: React.FC<inputProps> = ({ isOpen, onClose }) => {
         category,
       });
       if ((response.status = 201)) {
-        setIsLoading(false)
+        setIsLoading(false);
         reset();
         onClose();
         toast.success("Report added");
-        queryClient.invalidateQueries({ queryKey: ["getReport"] });
       }
     } catch (error: any) {
       setIsLoading(false);
       toast.error(error.response.data.error);
     }
   };
+  // @ts-ignore
+  const { mutate } = useMutation(handleCreate, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["report"]);
+    },
+  });
+
+  const onsubmit = async (data: any) => {
+    mutate(data);
+  };
   return (
     <Modal onClose={onClose} isOpen={isOpen}>
-      <form onSubmit={handleSubmit(handleCreate)}>
+      <form onSubmit={handleSubmit(onsubmit)}>
         <div className="space-y-12 ">
           <div className="border-b border-gray-900/10 pb-12">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -164,12 +175,9 @@ const Create: React.FC<inputProps> = ({ isOpen, onClose }) => {
           >
             Cancel
           </button>
-          <button
-            className="bg-blue-400 hover:bg-blue-200 flex justify-center rounded-md px-3 py-2 text-sm text-white"
-            type="submit"
-          >
-            Create
-          </button>
+          <Button primary type="submit" disabled={isLoading}>
+            {isLoading ? <BeatLoader color="#ffffff" /> : "Create"}
+          </Button>
         </div>
       </form>
     </Modal>

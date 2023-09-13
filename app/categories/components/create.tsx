@@ -4,23 +4,22 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import Modal from "../../components/modal";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import Button from "@/app/components/Button";
 import { BeatLoader } from "react-spinners";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface inputProps {
   isOpen: boolean;
   onClose: () => void;
- 
 }
 interface Inputs {
   name: string;
 }
 
 const Create: React.FC<inputProps> = ({ isOpen, onClose }) => {
-  const [isLoading, setIsLoading] = useState(false)
   const queryClient = useQueryClient();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -29,27 +28,36 @@ const Create: React.FC<inputProps> = ({ isOpen, onClose }) => {
   } = useForm<Inputs>();
 
   const handleCreate: SubmitHandler<Inputs> = async (data) => {
-    setIsLoading(true)
+    setIsLoading(true);
     const { name } = data;
     try {
       const response = await axios.post("/api/category", {
         name,
       });
       if ((response.status = 201)) {
+        setIsLoading(false);
         reset();
         onClose();
         toast.success("Category created");
-        queryClient.invalidateQueries({ queryKey: ["category"] });
-        setIsLoading(false)
       }
     } catch (error: any) {
+      setIsLoading(false);
       toast.error(error.response.data.error);
-      setIsLoading(false)
-    } 
+    }
+  };
+  // @ts-ignore
+  const { mutate } = useMutation(handleCreate, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["category"]);
+    },
+  });
+
+  const onsubmit = async (data: any) => {
+    mutate(data);
   };
   return (
     <Modal onClose={onClose} isOpen={isOpen}>
-      <form onSubmit={handleSubmit(handleCreate)}>
+      <form onSubmit={handleSubmit(onsubmit)}>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
             <h2 className="text-base font-semibold leading-7 text-gray-900">

@@ -3,27 +3,31 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import Modal from "../../components/modal";
-import {  FormEvent,  useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { BeatLoader } from "react-spinners";
+import Button from "@/app/components/Button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface inputProps {
   isOpen: boolean;
   onClose: () => void;
-  id:string
+  id: string;
 }
 
-
-const Update: React.FC<inputProps> = ({
-  isOpen,
-  onClose,
-  id
-}: inputProps) => {
+const Update: React.FC<inputProps> = ({ isOpen, onClose, id }: inputProps) => {
+  const queryClient = useQueryClient();
   const [categories, setCategories] = useState([]);
-  const [data, setData] = useState<{label:string, url:string, category:string}>({
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<{
+    label: string;
+    url: string;
+    category: string;
+  }>({
     label: "",
     url: "",
-    category:"Categories"
-  })
+    category: "Categories",
+  });
 
   const query = useQuery({
     queryKey: ["getCategory"],
@@ -33,48 +37,59 @@ const Update: React.FC<inputProps> = ({
     },
   });
 
-  const handleChange = (event:any) => {
+  const handleChange = (event: any) => {
     setData({
       ...data,
-      [event.target.name]:event.target.value
-    })
-  }
-
+      [event.target.name]: event.target.value,
+    });
+  };
 
   useEffect(() => {
     const getData = async () => {
-       const res = await axios.get(`/api/report/${id}`);
-       const data = await res.data.getOne;
+      const res = await axios.get(`/api/report/${id}`);
+      const data = await res.data.getOne;
       setData({
         url: data?.url || "",
         label: data?.label || "",
         category: data?.category || "",
       });
-     }
+    };
     getData();
-  }, [isOpen])
+  }, [isOpen, id]);
 
-  const handleUpdate = async (e:FormEvent<HTMLFormElement>)  => {
-    e.preventDefault()
-    const {url, label, category} = data
-     try {
-       const response = await axios.put(`/api/report/${id}`, {
-         url,
-         label,
-         category,
-       });
-       if ((response.status = 201)) {
-         onClose();
-         toast.success("report updated");
-       }
-     } catch (error: any) {
-       toast.error(error.response.data.error);
-     }
+  const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const { url, label, category } = data;
+    try {
+      const response = await axios.put(`/api/report/${id}`, {
+        url,
+        label,
+        category,
+      });
+      if ((response.status = 201)) {
+        setIsLoading(false);
+        onClose();
+        toast.success("report updated");
+      }
+    } catch (error: any) {
+      setIsLoading(false);
+      toast.error(error.response.data.error);
+    }
+  };
+  const { mutate } = useMutation(handleUpdate, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["report"]);
+    },
+  });
+
+  const onsubmit = async (data: any) => {
+    mutate(data);
   };
 
   return (
     <Modal onClose={onClose} isOpen={isOpen}>
-      <form onSubmit={handleUpdate}>
+      <form onSubmit={onsubmit}>
         <div className="space-y-12 overflow-y-auto">
           <div className="border-b border-gray-900/10 pb-12">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -102,7 +117,6 @@ const Update: React.FC<inputProps> = ({
             </div>
             <div className="flex flex-col mt-5">
               <div className="form-control w-full max-w-xs">
-               
                 <select
                   name="category"
                   value={data.category}
@@ -132,12 +146,9 @@ const Update: React.FC<inputProps> = ({
           >
             Cancel
           </button>
-          <button
-            className="bg-blue-400 hover:bg-blue-200 flex justify-center rounded-md px-3 py-2 text-sm"
-            type="submit"
-          >
-            Update
-          </button>
+          <Button primary type="submit" disabled={isLoading}>
+            {isLoading ? <BeatLoader color="#ffffff" /> : "Update"}
+          </Button>
         </div>
       </form>
     </Modal>
