@@ -131,7 +131,7 @@ export default function Category({ params }: props) {
         {!tableauUrl ? (
           <div className="flex justify-center items-center h-64">
             <p className="text-gray-400 text-2xl text-center ">
-              Report Dashboard will display here
+             Click on report link to view dashboard
             </p>
           </div>
         ) : (

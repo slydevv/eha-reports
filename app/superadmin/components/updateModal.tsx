@@ -46,12 +46,11 @@ const Update: React.FC<inputProps> = ({ isOpen, onClose, id, user  }: inputProps
 
   const handleUpdate: SubmitHandler<CreateUserInputs> = async (data) => {
 
-    const { name, email, password, category } = data;
+    const { name, email, category } = data;
     try {
       const response = await axios.put(`/api/report/${id}`, {
         name,
-        email,
-        password,
+        email, 
         category,
       });
       if ((response.status = 201)) {
@@ -85,14 +84,14 @@ const Update: React.FC<inputProps> = ({ isOpen, onClose, id, user  }: inputProps
                 placeholder="email"
               />
             </div>
-            <div className="flex flex-col mt-5">
+            {/* <div className="flex flex-col mt-5">
               <input
                 type="text"
                 className="pl-4 py-5 bg-[#F3F3F3] rounded-md mt-2"
                 {...register("password")}
                 placeholder="password"
               />
-            </div>
+            </div> */}
             <div className="flex flex-col mt-5">
               <Controller
                 name="category"

@@ -24,23 +24,26 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) { 
     try {
-        const { name, email, password, category } = await req.json();
+        const { name, email, categoryValue } = await req.json();
     const id = req.url.split("user/")[1]
-     const hashed = await bcrypt.hash(password, 12);
+     
         const update = await prisma.user.update({
-        where: {
-            id: parseInt(id)
-        }, 
-        data: {
+          where: {
+            id: parseInt(id),
+          },
+          data: {
             name,
             email,
-            password: hashed,
-            categories: {connect: category.map((singleCategory:any) => ({ name: singleCategory }))}
-            
-        }
-        })
+            categories: {
+              connect: categoryValue.map((singleCategory: any) => ({
+                name: singleCategory,
+              })),
+            },
+          },
+        });
     return NextResponse.json({update}, {status:200})
     } catch (error) {
+        console.log(error)
        return  NextResponse.json({ error },{status:400}) 
     }
     
