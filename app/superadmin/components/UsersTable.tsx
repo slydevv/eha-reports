@@ -29,8 +29,6 @@ const UsersTable: React.FC<UsersTableProps> = ({ initialUsers }) => {
    queryFn: () => axios("/api/user"),
    onSuccess: ({ data }) => {
      setUsers(data);
-     console.log("data",data)
-     console.log("users",users)
      
    },
  });

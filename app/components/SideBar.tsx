@@ -69,7 +69,7 @@ const SideBar: React.FC<SidebarProps> = ({ children }) => {
           ))}
         </Box>
         <div className="flex  p-2">
-          <button className="bg-neutral-900 rounded-full w-16 h-16">
+          <button className="bg-neutral-900 rounded-full w-10 h-10">
             <span className="text-white">
               {session?.user?.name?.charAt(0).toUpperCase()}
             </span>
