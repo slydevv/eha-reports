@@ -15,3 +15,12 @@ export const schema = yup.object({
   name: yup.string().required(),
   category: yup.array(),
 });
+
+  export const PasswordSchema = yup.object().shape({
+    password: yup.string()
+      .required("Password is required")
+      .min(6, "Password must be at 6 char long"),
+    confirmPwd: yup.string()
+      .required("Please confirm your password")
+      .oneOf([yup.ref("password")], "Passwords does not match"),
+  });

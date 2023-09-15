@@ -31,14 +31,14 @@ const Categories = ({ Categories }: CategoryProp) => {
             <div
               onClick={() => handleClick(category.id, category.name)}
               key={category.id}
-              className=" hover:cursor-pointer flex flex-col p-5 bg-[#FAFAFA] hover:bg-white border border-[#ececec] rounded-md h-[160px] "
+              className=" hover:cursor-pointer overflow-y-auto flex flex-col p-5 bg-[#FAFAFA] hover:bg-white border border-[#ececec] rounded-md h-[160px] "
             >
               <div className=" text-center">
                 <p className="text-3xl font-bold">{category?.name}</p>
               </div>
               {category.reports.map((report: any) => (
-                <ul key={report.id} className=" text-sm text-center pt-4">
-                  <li> {report.label} </li>
+                <ul key={report.id} className=" text-sm  pt-4">
+                  <li className="list-disc ml-4"> {report.label} </li>
                 </ul>
               ))}
             </div>

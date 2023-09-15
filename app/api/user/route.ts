@@ -65,11 +65,15 @@ export async function POST(req: NextRequest, res:NextResponse) {
                   },
                 });
           await resend.emails.send({
-            from: "Admin@eha.ng",
+            from: "informatics@eha.ng",
             to: [`${email}`],
-              subject: "Hello Colleauge",
+            subject: "Welcome to EHA Reports Platform!",
             // @ts-ignore
-      react: EmailTemplate({ firstName:name, email:email, password:password }),
+            react: EmailTemplate({
+              firstName: name,
+              email: email,
+              password: password,
+            }),
           });
                 
           return NextResponse.json({ result })
