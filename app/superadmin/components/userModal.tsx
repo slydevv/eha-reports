@@ -204,14 +204,16 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, id }) => {
           </div>
         </div>
 
-        <div className="mt-10 flex justify-end items-centr  gap-x-6">
-          {/* <div className="text-sm text-gray-600 ">Change user password</div> */}
-          
+        <div className="mt-10 flex justify-between items-centr  gap-x-6">
+          <div className="text-sm text-gray-900 hover:text-gray-600 cursor-pointer">
+            Change user password
+          </div>
+          <div className="flex">
             <button
               className={
                 form
                   ? `hidden`
-                  : `bg-gray-600 hover:bg-gray-400 flex justify-center rounded-md px-3 py-2 text-sm text-white`
+                  : `bg-gray-600 hover:bg-gray-400 flex justify-center rounded-md mx-3 px-3 py-2 text-sm text-white`
               }
               onClick={() => {
                 setForm(true);
@@ -224,7 +226,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, id }) => {
               className={
                 !form
                   ? `hidden`
-                  : `bg-gray-600 hover:bg-gray-400 flex justify-center rounded-md px-3 py-2 text-sm text-white`
+                  : `bg-gray-600 hover:bg-gray-400 flex justify-center rounded-md mx-3 px-3 py-2 text-sm text-white`
               }
               type="submit"
               onClick={onsubmit}
@@ -237,7 +239,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, id }) => {
             >
               Delete
             </button>
-          
+          </div>
         </div>
       </Modal>
       <ConfirmModal

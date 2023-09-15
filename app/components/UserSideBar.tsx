@@ -11,10 +11,15 @@ import {
   IoOptionsSharp,
   HiDocument,
   BiDotsHorizontalRounded,
+  CgProfile,
+  RiLockPasswordLine,
+  BiPowerOff,
 } from "../assets";
 import Box from "./Box";
 
 import { signOut } from "next-auth/react";
+import PasswordChange from "./PasswordModal";
+import UserInfo from "./UserInfo";
 
 
 
@@ -26,6 +31,12 @@ const UserSideBar: React.FC<SidebarProps> = ({ children }) => {
   const {data: session} = useSession()
  const pathName = usePathname();
   const [openMenu, setOpenMenu] = useState(false);
+  const [confirmPwd, setConfirmPwd] = useState(false);
+  const [userInfo, setUserInfo] = useState(false);
+  const onClose = () => {
+    setConfirmPwd(false)
+    setUserInfo(false)
+  }
   
   return (
     <div className="flex relative h-full ">
@@ -40,8 +51,32 @@ const UserSideBar: React.FC<SidebarProps> = ({ children }) => {
           />
         </div>
 
-        <Box className="justify-between my-8 px-3 py-2  space-y-8 h-full ">
-          
+        <Box className="justify-between my-8 px-3 py-10 font-semibold  text-left space-y-8 h-full ">
+          <div
+            className=" cursor-pointer flex "
+            onClick={() => setUserInfo(true)}
+          >
+            <CgProfile className="mx-3 mt-1" />
+            Profile
+          </div>
+          <div
+            className=" cursor-pointer flex"
+            onClick={() => setConfirmPwd(true)}
+          >
+            <RiLockPasswordLine className="mx-3 mt-1" />
+            Change Password
+          </div>
+          <div
+            className=" cursor-pointer flex"
+            onClick={() =>
+              signOut({
+                callbackUrl: "/",
+              })
+            }
+          >
+            <BiPowerOff className="mx-3 mt-1" />
+            Log out
+          </div>
         </Box>
         <div className="flex  p-2">
           <div className="bg-neutral-900 mx-auto flex flex-shrink-0 items-center justify-center rounded-full w-10 h-10">
@@ -77,6 +112,12 @@ const UserSideBar: React.FC<SidebarProps> = ({ children }) => {
         </div>
       </div>
       <main className="h-full flex-1 overflow-y-auto py-2">{children}</main>
+      <UserInfo isOpen={userInfo} onClose={onClose} id={"session?.user?.id"} />
+      <PasswordChange
+        isOpen={confirmPwd}
+        onClose={onClose}
+        id={session?.user?.id}
+      />
     </div>
   );
 }

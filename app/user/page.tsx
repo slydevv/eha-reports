@@ -40,17 +40,12 @@ export default function User() {
             <div className="flex flex-row justify-center items-center ">
               <div className="hidden md:block">
                 <div className="relative md:w-[200px] lg:w-80">
-                  <input
-                    type="text"
-                    className="py-5 pl-8 pr-4 bg-[#F5F4F7] w-full rounded-md md:mr-5 truncate"
-                    placeholder="Search for reports"
-                  />
+                  
                 </div>
               </div>
             </div>
           </div>
 
-        
         </section>
       </div>
     );

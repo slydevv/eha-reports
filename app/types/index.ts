@@ -25,6 +25,11 @@ export type CreateUserInputs = {
   isAdmin: boolean | null
 };
 
+export type password = {
+  password: string;
+  confirmPwd: string;
+};
+
 export type UserModalProps = {
   isOpen: boolean;
   onClose: () => void;
